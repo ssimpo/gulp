@@ -1,0 +1,32 @@
+{
+  "name": "@simpo/gulp",
+  "description": "Get gulp tasks from local folders.",
+  "main": "index.js",
+  "version": "0.1.0",
+  "scripts": {
+  },
+  "engines": ">=4.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Whitebolt/topic-subscribe.git"
+  },
+  "keywords": [
+  ],
+  "files": [
+  ],
+  "author": {
+    "email": "stephen@whitebolt.net",
+    "name": "Stephen Simpson"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/whitebolt/topic-subscribe/issues"
+  },
+  "homepage": "https://github.com/whitebolt/topic-subscribe#readme",
+  "dependencies": {
+  },
+  "devDependencies": {
+  },
+  "optionalDependencies": {
+  }
+}
