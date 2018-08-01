@@ -5,55 +5,54 @@ const settings = require('./lib/settings');
 const {createTasks} = require('./lib/tasks');
 const {log} = require('./lib/log');
 const {isString, kebabCase, chain} = require('./lib/util');
+const requireLike = require('require-like');
 
-const resolvers = [
-	(paramName, cwd, inject)=>{
-		if (inject.hasOwnProperty(paramName) && !isString(inject[paramName])) return inject[paramName];
+const resolvers = new Set([
+	({param, inject})=>{
+		if (inject.hasOwnProperty(param) && !isString(inject[param])) return inject[param];
 	},
-	(paramName, cwd, inject)=>require(((inject.hasOwnProperty(paramName) && isString(inject[paramName])) ?
-			inject[paramName] :
-			`gulp-${kebabCase(paramName)}`
-	)),
-	paramName=>{
-		if (xRollupPluginTest.test(paramName)) {
-			return require(kebabCase(paramName).replace('rollup-','rollup-plugin-'));
-		}
+	({param, require, inject})=>{
+		if (inject.hasOwnProperty(param) && isString(inject[param])) return require(inject[param]);
 	},
-	paramName=>require(kebabCase(paramName)),
-	paramName=>require(paramName)
-];
+	({param, require})=>require(`gulp-${kebabCase(param)}`),
+	({param, require})=>require(kebabCase(param)),
+	({param, require})=>require(param)
+]);
+
+settings.set('resolvers', resolvers);
 
 
 /**
  * Try to load a module represented by given paramter name.
  *
  * @throws {RangeError}							Throws when module not available for given parameter name.
- * @param {string|Array.<string>} paramName		Parameter name to load module for. If array, load for each and
+ * @param {string|Array.<string>} param		Parameter name to load module for. If array, load for each and
  * 												return an array.
  * @param {Object} inject						Inject object to use.
  * @returns {*}									Module for given parameter name.
  */
-function getModule(paramName, cwd=process.cwd(), inject={}) {
-	if (Array.isArray(paramName)) return paramName.map(paramName=>getModule(paramName, inject));
-	if (paramName === 'getModule') return moduleId=>getModule(moduleId, cwd, inject);
+function getModule({param, cwd=process.cwd(), path=cwd, inject={}}) {
+	if (Array.isArray(param)) return param.map(paramName=>getModule(paramName, inject));
+	if (param === 'getModule') return moduleId=>getModule(moduleId, cwd, inject);
 
+	const require = requireLike(path);
 	let resolved;
-	const found = resolvers.find((resolver, n)=>{
+	const found = [...resolvers.values()].find(resolver=>{
 		try {
-			resolved = resolver(paramName, cwd, inject);
+			resolved = resolver({param, cwd, require, inject});
 			return !!resolved;
 		} catch(err) {}
 	});
 	if (!!found) return resolved;
 
-	throw new RangeError(`Could not inject module for ${paramName}, did you forget to 'npm install' / 'yarn add' the given module.`);
+	throw new RangeError(`Could not inject module for ${param}, did you forget to 'npm install' / 'yarn add' the given module.`);
 }
 
-function getInjection(func, cwd=process.cwd(), inject={}) {
+function getInjection({func, cwd=process.cwd(), inject={}, path=cwd}) {
 	return chain(func)
 		.parseParameters()
 		.filter(param=>param)
-		.map(param=>getModule(param, cwd, inject))
+		.map(param=>getModule({param, cwd, path, inject}))
 		.value();
 }
 
@@ -79,7 +78,7 @@ function createTask(taskId, tasks, gulp) {
 				}
 			};
 
-			const di = getInjection(task.fn, cwd, {gulp, done:complete});
+			const di = getInjection({func:task.fn, cwd, path:(task.path || cwd), inject:{gulp, done:complete}});
 			if (!!di.find(di=>(di===complete))) return task.fn(...di);
 			asyncDone(()=>task.fn(...di), complete);
 		};
