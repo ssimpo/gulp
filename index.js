@@ -1,5 +1,6 @@
 'use strict';
 
+const asyncDone = require('async-done');
 const settings = require('./lib/settings');
 const {createTasks} = require('./lib/tasks');
 const {log} = require('./lib/log');
@@ -78,14 +79,9 @@ function createTask(taskId, tasks, gulp) {
 				}
 			};
 
-			const stream = task.fn(...getInjection(task.fn, cwd, {gulp, done:complete}));
-			if (!!stream) {
-				if (stream.on) {
-					stream.on('end', complete);
-					stream.on('finish', complete);
-				}
-				if (stream.then) stream.then(complete);
-			}
+			const di = getInjection(task.fn, cwd, {gulp, done:complete});
+			if (!!di.find(di=>(di===complete))) return task.fn(...di);
+			asyncDone(()=>task.fn(...di), complete);
 		};
 		_task.displayName = (task.name || task.fn.displayName || taskId);
 
