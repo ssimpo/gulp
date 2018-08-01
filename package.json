@@ -2,7 +2,7 @@
   "name": "@simpo/gulp",
   "description": "Get gulp tasks from local folders.",
   "main": "index.js",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "scripts": {},
   "engines": ">=4.0.0",
   "repository": {
@@ -25,7 +25,8 @@
     "gulp-sequence": "^1.0.0",
     "lodash": "^4.17.10",
     "require-like": "^0.1.2",
-    "turbocolor": "^2.4.1"
+    "turbocolor": "^2.4.1",
+    "undertaker-registry": "^1.0.1"
   },
   "devDependencies": {},
   "optionalDependencies": {}
