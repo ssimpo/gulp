@@ -51,6 +51,7 @@ function getModule(paramName, cwd=process.cwd(), inject={}) {
 function getInjection(func, cwd=process.cwd(), inject={}) {
 	return chain(func)
 		.parseParameters()
+		.filter(param=>param)
 		.map(param=>getModule(param, cwd, inject))
 		.value();
 }
@@ -63,26 +64,46 @@ function getInjection(func, cwd=process.cwd(), inject={}) {
  */
 function createTask(taskId, tasks, gulp) {
 	const task = tasks[taskId];
-	return function(done) {
+	const taskFn = function(done) {
 		log('Found task', task.path);
 
 		const cwd = task.cwd || process.cwd();
-		const _task = ()=>{
-			const stream = task.fn(...getInjection(task.fn, cwd, {gulp, done}));
+		const _task = function(__done) {
+			let isComplete = false;
+			const complete = ()=>{
+				if (!isComplete) {
+					isComplete = true;
+					if (!!__done) __done();
+					done();
+				}
+			};
+
+			const stream = task.fn(...getInjection(task.fn, cwd, {gulp, done:complete}));
 			if (!!stream) {
-				if (stream.on) stream.on('end', done);
-				if (stream.then) stream.then(done);
+				if (stream.on) {
+					stream.on('end', complete);
+					stream.on('finish', complete);
+				}
+				if (stream.then) stream.then(complete);
 			}
 		};
+		_task.displayName = (task.name || task.fn.displayName || taskId);
 
 		if (!task.deps.length) return _task();
-		if (gulp.series && gulp.parallel) return gulp.series(...task.deps.map(taskId=>{
-			if (Array.isArray(taskId)) return gulp.parallel(...taskId);
-			return taskId;
-		}), _task);
-		const gulpSequence = require('gulp-sequence').use(gulp);
-		return gulpSequence(...task.deps, _task);
+		if (!!gulp.series && !!gulp.parallel) {
+			return gulp.series([...task.deps.map(taskId=>{
+				if (Array.isArray(taskId)) return gulp.parallel(...taskId);
+				return taskId;
+			}), _task])();
+		} else {
+			const gulpSequence = require('gulp-sequence').use(gulp);
+			return gulpSequence(...task.deps, _task);
+		}
 	};
+
+	taskFn.displayName = task.name || task.fn.displayName || taskId;
+
+	return taskFn;
 }
 
 function addTasksToGulp(tasks, gulp) {
