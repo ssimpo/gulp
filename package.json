@@ -3,17 +3,14 @@
   "description": "Get gulp tasks from local folders.",
   "main": "index.js",
   "version": "0.1.0",
-  "scripts": {
-  },
+  "scripts": {},
   "engines": ">=4.0.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Whitebolt/topic-subscribe.git"
   },
-  "keywords": [
-  ],
-  "files": [
-  ],
+  "keywords": [],
+  "files": [],
   "author": {
     "email": "stephen@whitebolt.net",
     "name": "Stephen Simpson"
@@ -24,9 +21,10 @@
   },
   "homepage": "https://github.com/whitebolt/topic-subscribe#readme",
   "dependencies": {
+    "gulp-sequence": "^1.0.0",
+    "lodash": "^4.17.10",
+    "turbocolor": "^2.4.1"
   },
-  "devDependencies": {
-  },
-  "optionalDependencies": {
-  }
+  "devDependencies": {},
+  "optionalDependencies": {}
 }
