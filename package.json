@@ -2,7 +2,7 @@
   "name": "@simpo/gulp",
   "description": "Get gulp tasks from local folders.",
   "main": "index.js",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "scripts": {},
   "engines": ">=4.0.0",
   "repository": {
