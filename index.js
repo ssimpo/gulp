@@ -1,9 +1,14 @@
 'use strict';
 
+const path = require('path');
 const Undertaker = require('undertaker-registry');
 const {importTasks, set, get} = require('./lib');
+const asyncDone = require('async-done');
+const notifier = require('node-notifier');
 
-const restictedProps = new Set(['src', 'dest', 'symlink', 'task', 'lastRun', 'parallel', 'series', 'watch', 'tree', 'registry']);
+const restictedProps = new Set([
+	'src', 'dest', 'symlink', 'task', 'lastRun', 'parallel', 'series', 'watch', 'tree', 'registry'
+]);
 
 
 class _Import_Tasks extends Undertaker {
@@ -16,6 +21,24 @@ class _Import_Tasks extends Undertaker {
 
 	init(undertaker) {
 		importTasks(this, undertaker);
+	}
+
+	get(name) {
+		const task = super.get(name);
+		if (!!this.top) return task;
+		this.top = true;
+		return done=>{
+			asyncDone(task, ()=>{
+				this.top = false;
+				notifier.notify({
+					title: 'Gulp Task Complete',
+					message: `Gulp task: "${name}" has completed`,
+					icon: path.join(__dirname, '/media/images/gulp.png'),
+					wait: false
+				});
+				done();
+			});
+		};
 	}
 }
 
