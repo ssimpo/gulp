@@ -2,7 +2,7 @@
   "name": "@simpo/gulp-augment",
   "description": "Augment gulp (3 & 4) with task importing, muliple roots, dependency-injection, desktop notification, settings import and muchh more.",
   "main": "index.js",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "scripts": {},
   "engines": ">=4.0.0",
   "repository": {
@@ -15,7 +15,7 @@
     "yarn.lock",
     "skrinkwrap.yaml",
     "package-lock.lock",
-    "media/gulp.png"
+    "media/images/gulp.png"
   ],
   "keywords": [],
   "author": {
