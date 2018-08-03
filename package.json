@@ -2,7 +2,7 @@
   "name": "@simpo/gulp-augment",
   "description": "Augment gulp (3 & 4) with task importing, muliple roots, dependency-injection, desktop notification, settings import and muchh more.",
   "main": "index.js",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "scripts": {},
   "engines": ">=4.0.0",
   "repository": {
@@ -18,7 +18,6 @@
     "media/gulp.png"
   ],
   "keywords": [],
-  "files": [],
   "author": {
     "email": "stephen@whitebolt.net",
     "name": "Stephen Simpson"
