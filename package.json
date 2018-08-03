@@ -2,13 +2,21 @@
   "name": "@simpo/gulp-augment",
   "description": "Augment gulp (3 & 4) with task importing, muliple roots, dependency-injection, desktop notification, settings import and muchh more.",
   "main": "index.js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {},
   "engines": ">=4.0.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ssimpo/gulp-augment.git"
   },
+  "files": [
+    "lib/",
+    "index.js",
+    "yarn.lock",
+    "skrinkwrap.yaml",
+    "package-lock.lock",
+    "media/gulp.png"
+  ],
   "keywords": [],
   "files": [],
   "author": {
