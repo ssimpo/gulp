@@ -5,13 +5,14 @@ const Undertaker = require('undertaker-registry');
 const {importTasks, set, get} = require('./lib');
 const asyncDone = require('async-done');
 const notifier = require('node-notifier');
+const requireLike = require('require-like');
 
 const restictedProps = new Set([
 	'src', 'dest', 'symlink', 'task', 'lastRun', 'parallel', 'series', 'watch', 'tree', 'registry'
 ]);
 
 
-class _Import_Tasks extends Undertaker {
+class Augment_Registry extends Undertaker {
 	constructor(options={}) {
 		super(options);
 		Object.keys(options).forEach(key=>{
@@ -22,7 +23,9 @@ class _Import_Tasks extends Undertaker {
 	init(undertaker) {
 		importTasks(this, undertaker);
 	}
+}
 
+class Notifier_Registry extends  Undertaker {
 	get(name) {
 		const task = super.get(name);
 		if (!!this.top) return task;
@@ -42,15 +45,42 @@ class _Import_Tasks extends Undertaker {
 	}
 }
 
-function Import_Tasks(...params) {
-	if (new.target)	{
-		return new _Import_Tasks(...params);
-	} else{
-		return importTasks(...params)
+function getGulpCliVersion() {
+	const {sep} = require('path');
+	const xGulpCli = new RegExp(`/.*gulp\-cli.*\\${sep}versioned\\${sep}.([0-9.]+)`);
+	const versioned = Object.keys(require.cache).find(filepath=>xGulpCli.test(filepath));
+	if (!versioned) return 3;
+	try {
+		return parseInt(xGulpCli.exec(versioned)[1].split('.').shift());
+	} catch(err) {
+		return 3;
 	}
 }
 
-Import_Tasks.set = set;
-Import_Tasks.get = get;
+function getCliGulp() {
+	const version = getGulpCliVersion();
+	const require = requireLike(module.parent.id);
+	if (version === 4) return require('gulp4');
+	if (version === 3) return require('gulp');
+}
 
-module.exports = Import_Tasks;
+function augment(options={}) {
+	if (!options.gulp) options.gulp = getCliGulp();
+	if (!options.root) options.root = path.dirname(module.parent.id);
+
+	if (options.gulp.registry) {
+		options.gulp.registry(new Augment_Registry(options));
+		options.gulp.registry(new Notifier_Registry());
+	} else {
+		const {gulp, root, ...config} = options;
+		Object.keys(config).forEach(optionName=>set(optionName, config[optionName]));
+		importTasks(root, gulp);
+	}
+
+	return options.gulp;
+}
+
+
+module.exports = {
+	Augment_Registry, set, get, Notifier_Registry, augmentGulp:importTasks, getGulpCliVersion, getCliGulp, augment
+};
