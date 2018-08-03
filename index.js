@@ -6,6 +6,7 @@ const {importTasks, set, get} = require('./lib');
 const asyncDone = require('async-done');
 const notifier = require('node-notifier');
 const requireLike = require('require-like');
+const {argv} = require('yargs');
 
 const restictedProps = new Set([
 	'src', 'dest', 'symlink', 'task', 'lastRun', 'parallel', 'series', 'watch', 'tree', 'registry'
@@ -66,7 +67,8 @@ function getCliGulp() {
 
 function augment(options={}) {
 	if (!options.gulp) options.gulp = getCliGulp();
-	if (!options.root) options.root = path.dirname(module.parent.id);
+	if (!options.root) options.root = path.dirname(module.parent.id)
+	if (argv.verbose) options.debug = true;
 
 	if (options.gulp.registry) {
 		options.gulp.registry(new Augment_Registry(options));
