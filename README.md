@@ -30,25 +30,27 @@ pnpm install --save-dev "@simpo/gulp-augment"
 
 ## What is gulp-augment
 
-Gulp is awesome but I found myself constantly writing my helper functions and modules.  When you start to write the same helper code over and over again in different modules it is probably better to formalise it into a module.
+Gulp is great! However, I've found myself repeatedly writing extra helper functions and modules.  When you start to write the same code over and over again, it is time to formalise that code it into a module.
 
-Gulp Augment is a collection of gulp additions and tools to make life easier.  It is not an attempt to improve gulp or make it better, but rather a collection of helpful extras.
+Gulp Augment is a collection of additions and tools for gulp.  It is not an attempt to improve gulp, but rather a collection of helpful extras.
 
 ## Can I help?
 
-I will always look favourably at PR requests any suggestions for improving things. This is especially true for bug fixes and code improvement. 
+I will always look favourably at PR requests and suggestions for improvements. This is especially true for bug fixes and code improvement. 
 
-If you have any great additions that you use in your gulp workflow, I'd be interest to hear from you.  I can't promise to include them as we have to avoid bloat and functionality that is to too bespoke; however, anything that make gulping quicker, nicer or more efficient will be considered.
+If you have any great additions that you use in your gulp workflow, I'd be interested to hear from you.  I can't promise to include them as we have to avoid bloat; as well as, functionality that is to too bespoke. However, anything that makes gulping quicker, nicer or more efficient will be considered.
 
 ## Project status
 
 **Permanent beta** - aka Google style
 
-Basically, this module is stable and I will not be adding anything that breaks current functionality.  However, I am looking to add more and better functionality over time; hence, we are still beta as it might expand a lot be we call it stable.
-
+This module is stable. I will not be add anything that breaks current functionality (unless tagged as experimental/beta).  However, I am looking to add more and better functionality over time; hence, we are still in beta.  The module may expand a considerably before we reach true 'stable'.
+ 
 ## Gulp Versions
 
-This module should work seamlessly in either gulp3 or gulp4.  Some minor functionality does not work in gulp3 but these are non-essential and non-breaking. Part of the idea of this module is cut across the differences between the two gulps so you don't have to remember what you used on a particular project.
+This module should work seamlessly in either gulp3 or gulp4.  There is some minor functionality does not work in gulp3 (these are non-essential and non-breaking).
+
+One of the core ideas with this module is cut across the differences between the two gulps so you don't have to remember what you used on a particular project.
 
 ## Getting started
 
@@ -56,7 +58,7 @@ Once you've installed the module you can simply use it as follows:
 
 ```javascript
 // gulpfile.js
-const {Augment_Registry} = require('gulp-augment);
+const {Augment_Registry} = require('gulp-augment');
 const gulp4 = require('gulp4');
 
 gulp.registry(new Augment_Registry());
@@ -66,7 +68,7 @@ gulp.registry(new Augment_Registry());
 
 ```javascript
 // gulpfile.js
-const {augmentGulp} = require('gulp-augment);
+const {augmentGulp} = require('gulp-augment');
 const gulp = require('gulp');
 
 augmentGulp(__dirname, gulp);
@@ -76,7 +78,7 @@ If you can't be bothered with detecting your gulp version you can simply do this
 
 ```javascript
 // gulpfile.js
-const {augment} = require('gulp-augment);
+const {augment} = require('gulp-augment');
 const gulp = augment();
 ```
 
@@ -86,7 +88,7 @@ Obviously, this only works if you are loading via the cli and it is an experimen
 
 Gulp files quickly become large and difficult to decipher, dividing code into separate files is just sensible.  It also allows for better code sharing. 
 
-You could just divide your code up and then do a bunch of requires; but, who can be bothered with that? If you put your file in the right place it would be nice if it just loaded.  No need for config and no need for extra code.
+You could just divide your code up and then do a bunch of requires; but, who can be bothered with that? If you put your file in the right place it would be nice if they just loaded.  No need for config and no need for extra code.
 
 Augment will load all tasks in the gulp folder of your project root (the folder with gulpfile in it).  You can supply your root folder path or let augment assume it is the directory of the calling script (if that is gulpfile.js then your project root).
 
@@ -115,7 +117,7 @@ gulp test
 npx gulp test
 ```
 
-If the file was stored at _./gulp/test/browser_ then your gulp task will be called **'test:browser'**. Augment will also respect the displayName property of your task function (as gulp does), so you can override thhe task name as follows:
+If the file was stored at _./gulp/test/browser_ then your gulp task will be called **'test:browser'**. Augment will also respect the displayName property of your task function (as gulp does), so you can override the task name with:
 
 ```javascript
 function task(done) {
@@ -211,7 +213,7 @@ Augment can load from multiple roots simple by providing an an array as the root
 
 ```javascript
 // gulpfile.js
-const {augment} = require('gulp-augment);
+const {augment} = require('gulp-augment');
 const gulp = augment({root:[__dirname, '~/']});
 ```
 
@@ -219,7 +221,7 @@ or, specifically in gulp3
 
 ```javascript
 // gulpfile.js
-const {augmentGulp} = require('gulp-augment);
+const {augmentGulp} = require('gulp-augment');
 const gulp = require('gulp');
 
 augmentGulp([__dirname, '~/', gulp);
@@ -237,7 +239,7 @@ Two methods are exported for this purpose:
 
 ```javascript
 // gulpfile.js
-const {getGulpCliVersion, getCliGulp} = require('gulp-augment);
+const {getGulpCliVersion, getCliGulp} = require('gulp-augment');
 
 // get the gulp version expected by the cli.
 // will return either 3 or 4 as numbers.
@@ -252,7 +254,7 @@ You can also use these two methods transparently and apply augment the same time
 
 ```javascript
 // gulpfile.js
-const {augment} = require('gulp-augment);
+const {augment} = require('gulp-augment');
 const gulp = augment();
 ```
 
@@ -298,27 +300,28 @@ The first module found is loaded.
 
 # Settings import
 
-Augment has an internal static module (available via dependency injection) called ***settings***. Settings will be an objects of settings retrieved from the following locations andf merged together:
+Augment has an internal static module (available via dependency injection) called *settings*. Settings will be an objects of settings retrieved from the following locations andf merged together:
 
- - The *gulp* property of ***package.json**.
- - The *name* property of ***package.json**.
- - The contents of **gulp.json**.
- - The contents of **local.json**.
+ - The commandline arguments parsed for objects.
+ - The *gulp* property of *package.json*.
+ - The *name* property of *package.json*.
+ - The contents of *gulp.json*.
+ - The contents of *local.json*.
  
  The data in each of these locations is loaded and merged together to supply the settings object. The files do not need to be supplied, if they are not available they are not loaded.
  
  You can use these settings files how you like but the is:
  
- - ***pasckage.json*** has your settings in
- - ***gulp.json*** can be used if settings in ***package.json*** are becoming too large and you need to separate it out.  In this case ***package.json*** can be use for settings thhat are solid and to do with the other-all project (eg. naming and versioning).
- - ***local.json*** is for local overrides (it loads last and will override previous settings) and can be used for user or machine overrides.  It is best in this case to keep ***local.json*** out of **.gitignore**. 
+ - *pasckage.json* has your settings in
+ - *gulp.json* can be used if settings in *package.json* are becoming too large and you need to separate it out.  In this case *package.json* can be use for settings thhat are solid and to do with the other-all project (eg. naming and versioning).
+ - *local.json* is for local overrides (it loads last and will override previous settings) and can be used for user or machine overrides.  It is best in this case to keep *local.json* out of *.gitignore*. 
  
  
  The settings are loaded from the local root.  So each task might have different settings if loaded from different root directories.
  
 ## Templating in settings
  
- The settings loader will parse any _${variable}_ text (ES6 Template style) using thhe settings object as its source.  So the following json:
+ The settings loader will parse any _${variable}_ text (ES6 Template style) using the settings object as its source.  So the following json:
  
  ```json
  {
